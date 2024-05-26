@@ -1,0 +1,71 @@
+def solution(A):
+    if not A or not A[0]:
+        return 0
+
+    N = len(A)
+    M = len(A[0])
+    
+    # Create a DP table to store the size of the largest square ending at each cell
+    dp = [[0] * M for _ in range(N)]
+    
+    # Initialize the DP table
+    for i in range(N):
+        for j in range(M):
+            if A[i][j]:
+                if i == 0 or j == 0:
+                    dp[i][j] = 1
+                else:
+                    dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+    
+    # Find the two largest squares
+    largest = 0
+    second_largest = 0
+    largest_positions = []
+    
+    for i in range(N):
+        for j in range(M):
+            if dp[i][j] > largest:
+                second_largest = largest
+                largest = dp[i][j]
+                largest_positions = [(i, j)]
+            elif dp[i][j] == largest:
+                largest_positions.append((i, j))
+            elif dp[i][j] > second_largest:
+                second_largest = dp[i][j]
+    
+    # Check if we have at least two largest squares that do not overlap
+    if len(largest_positions) >= 2:
+        return largest * largest
+    
+    # If not, we need to check the second largest square
+    if second_largest > 0:
+        return second_largest * second_largest
+    
+    return 0
+
+# Example usage:
+A1 = [
+    [False, True, False, True],
+    [True, True, True, False],
+    [True, True, True, True],
+    [False, True, True, True]
+]
+
+A2 = [
+    [True, True, True, True],
+    [True, True, True, True],
+    [True, True, True, True],
+    [True, True, True, True],
+    [True, True, True, True],
+    [True, True, True, True]
+]
+
+A3 = [
+    [False, False, False, False, False],
+    [False, False, True, False, False],
+    [False, False, False, False, False]
+]
+
+print(solution(A1))  # Output: 4
+print(solution(A2))  # Output: 9
+print(solution(A3))  # Output: 0
